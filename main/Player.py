@@ -32,8 +32,8 @@ class Player(pyglet.sprite.Sprite, pyglet.window.EventDispatcher):
         self.health = 100  # Здоровье игрока
         self.jump_speed = 700  # Скорость прыжка
         self.on_ground = False  # Флаг, указывающий, что игрок на земле
-        self.max_shurikens = 10  # Максимальное количество сюрикенов
-        self.shurikens = self.max_shurikens  # Текущее количество сюрикенов
+        self.max_shurikens = 9999999999  # Максимальное количество сюрикенов
+        self.shurikens = 9  # Текущее количество сюрикенов
         self.shoot_cooldown = 0.5  # Время между выстрелами
         self.shoot_timer = 0.0  # Таймер для отслеживания времени между выстрелами
 

@@ -4,13 +4,14 @@ import pymunk
 import pymunk.pyglet_util
 from pyglet.window import FPSDisplay
 
-from GLOBAL import KEY_HANDLER, CAMERA_OFFSET, PLAYER_COLLISION, SHURIKEN_COLLISION, ENEMY_COLLISION, BULLET_COLLISION, AMMO_COLLISION
+from GLOBAL import KEY_HANDLER, CAMERA_OFFSET, PLAYER_COLLISION, SHURIKEN_COLLISION, ENEMY_COLLISION, BULLET_COLLISION, AMMO_COLLISION, HEALTH_COLLISION
 from Player import Player
 from Enemy import Enemy
 from KARTA_ZAGRUZKA import KARTA_ZAGRUZOCHNIK
 from Bullet import Bullet
 from Shuriken import Shuriken
 from AmmoPickup import AmmoPickup
+from HealthPickup import HealthPickup
 
 DRAW_OPTIONS = pymunk.pyglet_util.DrawOptions()
 window = pyglet.window.Window(width=800, height=600)
@@ -30,11 +31,12 @@ colision_handler.pre_solve = collision_handler_func
 wall_sprite = pyglet.image.load('ASSETS/IMAGES/wall.png')
 wall_sprite.anchor_x, wall_sprite.anchor_y = wall_sprite.width // 2, wall_sprite.height // 2
 enemy_static_image = pyglet.image.load('ASSETS/IMAGES/Enemy.jpeg')
-ammo_pickup_image = pyglet.image.load('ASSETS/IMAGES/shuriken.png')  # Загрузите изображение для патронов
+ammo_pickup_image = pyglet.image.load('ASSETS/IMAGES/shuriken.png')
+health_pickup_image = pyglet.image.load('ASSETS/IMAGES/Enemy.jpeg')  # Загрузите изображение для баночек со здоровьем
 
 # Загрузчик карты
 map_loader = KARTA_ZAGRUZOCHNIK(window, main_batch, space)
-map_data = map_loader.load("ASSETS/MAPS/MAP_1_UHAUHAUHAUAHUAHUHA", wall_sprite, enemy_static_image, ammo_pickup_image)
+map_data = map_loader.load("ASSETS/MAPS/MAP_1_UHAUHAUHAUAHUAHUHA", wall_sprite, enemy_static_image, ammo_pickup_image, health_pickup_image)
 
 # Загрузка анимаций для игрока
 player_idle_images = pyglet.image.ImageGrid(pyglet.image.load('ASSETS/IMAGES/IDLE.png'), 1, 10, item_height=65)
@@ -50,8 +52,20 @@ window.push_handlers(player)
 
 # Полоска здоровья
 foreground_group = pyglet.graphics.Group(order=1)  # Группа для переднего плана
-health_bar_bg = pyglet.shapes.Rectangle(0, 0, 200, 20, color=(255, 0, 0), batch=main_batch, group=foreground_group)
-health_bar_fg = pyglet.shapes.Rectangle(0, 0, 200, 20, color=(0, 255, 0), batch=main_batch, group=foreground_group)
+health_bar_bg = pyglet.shapes.Rectangle(10, window.height - 30, 200, 20, color=(255, 0, 0), batch=main_batch, group=foreground_group)
+health_bar_fg = pyglet.shapes.Rectangle(10, window.height - 30, 200, 20, color=(0, 255, 0), batch=main_batch, group=foreground_group)
+
+# Счётчик патронов
+ammo_label = pyglet.text.Label(
+    text=f"Shurikens: {player.shurikens}",
+    font_name="Calibri",
+    font_size=16,
+    x=10,
+    y=window.height - 60,
+    color=(255, 255, 255, 255),
+    batch=main_batch,
+    group=foreground_group
+)
 
 game_over_label = pyglet.text.Label('GAME OVER', font_name="Calibri", font_size=36, color=(255, 255, 255))
 
@@ -117,6 +131,19 @@ def ammo_player_collision(arbiter, space, _):
             break
     return True
 
+# Обработчик коллизий для сбора баночек со здоровьем
+def health_player_collision(arbiter, space, _):
+    health_shape = arbiter.shapes[0]
+    player_shape = arbiter.shapes[1]
+
+    for health_pickup in map_data.get("health_pickups", []):
+        if health_pickup.shape == health_shape:
+            health_pickup.collect(player)
+            space.remove(health_pickup.body, health_pickup.shape)
+            map_data["health_pickups"].remove(health_pickup)
+            break
+    return True
+
 # Добавляем обработчики коллизий
 handler_bullet_player = space.add_collision_handler(BULLET_COLLISION, PLAYER_COLLISION)
 handler_bullet_player.begin = bullet_player_collision
@@ -126,6 +153,9 @@ handler_shuriken_enemy.begin = shuriken_enemy_collision
 
 handler_ammo_player = space.add_collision_handler(AMMO_COLLISION, PLAYER_COLLISION)
 handler_ammo_player.begin = ammo_player_collision
+
+handler_health_player = space.add_collision_handler(HEALTH_COLLISION, PLAYER_COLLISION)
+handler_health_player.begin = health_player_collision
 
 @window.event
 def on_draw():
@@ -162,8 +192,13 @@ def update(dt):
         # Обновляем полоску здоровья
         health_bar_fg.width = (player.health / 100) * 200
 
+
         health_bar_fg.position = player.position[0] + 250, player.position[1] + 300
         health_bar_bg.position = player.position[0] + 250, player.position[1] + 300
+
+        # Обновляем счётчик патронов
+        ammo_label.text = f"Shurikens: {player.shurikens}"
+        ammo_label.position = player.position[0] + 250, player.position[1] + 280, 0
 
 def fixed_update(dt):
     space.step(dt)

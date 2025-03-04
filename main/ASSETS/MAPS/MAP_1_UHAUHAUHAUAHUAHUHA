@@ -15,17 +15,17 @@ KARTA:
 #                     A ###                                                               #
 #                   A #                                                                   #
 #              AAAA #                                                                     #
-#       AAA #######                                                                       #
-#AAAAAAA###         ###                                                                   #
-#PAAAAAA                ###                                                               #
-########                    ###                                                           #
-#                               ###                                            E E E E    #
-#                           ###                                                E E E E    #
-#                       ###                                                    E E E E    #
-#                   ###                                                        E E E E    #
-#               ###                                                            E E E E    #
-#           ###                                                                E E E E    #
+#       AAA #######  H                                                                    #
+#AAAAAAA###         ###  H                                                                #
+#PAAAAAA                ###  H                                                            #
+########                    ###  H                                                        #
+#                            H  ###                                            E E E E    #
+#                        H  ###                                                E E E E    #
+#                    H  ###                                                    E E E E    #
+#                H  ###                                                        E E E E    #
+#            H  ###                                                            E E E E    #
+#        H  ###                                                                E E E E    #
 #       ###                                                                    E E E E    #
-#                                                                              E E E E    #
+#                              HHHHHHHHH                                       E E E E    #
 ##########################################################################################
 """

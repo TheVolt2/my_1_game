@@ -2,6 +2,7 @@ import pyglet
 import pymunk
 from Enemy import Enemy
 from AmmoPickup import AmmoPickup
+from HealthPickup import HealthPickup
 
 
 class KARTA_ZAGRUZOCHNIK:
@@ -11,7 +12,7 @@ class KARTA_ZAGRUZOCHNIK:
         self.space = space
         self.sprites_crutch = []
 
-    def load(self, file_path, wall_sprite: pyglet.image.AbstractImage, enemy_sprite: pyglet.image.AbstractImage = None, ammo_pickup_image: pyglet.image.AbstractImage = None):
+    def load(self, file_path, wall_sprite: pyglet.image.AbstractImage, enemy_sprite: pyglet.image.AbstractImage = None, ammo_pickup_image: pyglet.image.AbstractImage = None, health_pickup_image: pyglet.image.AbstractImage = None):
         cell_size = 64  # Размер стен по умолчанию
         map_file = open(file_path, 'r', encoding='utf-8')
         line = map_file.readline()
@@ -21,7 +22,7 @@ class KARTA_ZAGRUZOCHNIK:
                 cell_size = int(line.split(":")[1])
             line = map_file.readline()
 
-        map_data = {"enemies": [], "ammo_pickups": []}
+        map_data = {"enemies": [], "ammo_pickups": [], "health_pickups": []}
         map_file.readline()
 
         x = 0
@@ -50,6 +51,11 @@ class KARTA_ZAGRUZOCHNIK:
                     ammo_pickup = AmmoPickup(ammo_pickup_image, self.space, x, y, self.batch)
                     self.sprites_crutch.append(ammo_pickup)
                     map_data["ammo_pickups"].append(ammo_pickup)
+
+                elif symbol == "H" and health_pickup_image is not None:  # Объект для пополнения здоровья
+                    health_pickup = HealthPickup(health_pickup_image, self.space, x, y, self.batch)
+                    self.sprites_crutch.append(health_pickup)
+                    map_data["health_pickups"].append(health_pickup)
 
                 x += cell_size
 
