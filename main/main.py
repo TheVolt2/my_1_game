@@ -32,7 +32,7 @@ wall_sprite = pyglet.image.load('ASSETS/IMAGES/wall.png')
 wall_sprite.anchor_x, wall_sprite.anchor_y = wall_sprite.width // 2, wall_sprite.height // 2
 enemy_static_image = pyglet.image.load('ASSETS/IMAGES/Enemy.jpeg')
 ammo_pickup_image = pyglet.image.load('ASSETS/IMAGES/shuriken.png')
-health_pickup_image = pyglet.image.load('ASSETS/IMAGES/Enemy.jpeg')  # Загрузите изображение для баночек со здоровьем
+health_pickup_image = pyglet.image.load('ASSETS/IMAGES/zdorovie.jpg')  # Загрузите изображение для баночек со здоровьем
 
 # Загрузчик карты
 map_loader = KARTA_ZAGRUZOCHNIK(window, main_batch, space)
